@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>River Rescue Hero - Deluxe Edition</title>
+    <title>River Rescue Hero - Retro RPG Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -11,31 +12,36 @@
             padding: 0;
             user-select: none;
             -webkit-user-select: none;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Press Start 2P', cursive, monospace;
         }
 
         body, html {
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #090d16;
+            background-color: #050811;
             color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         #game-container {
             position: relative;
-            width: 100%;
-            height: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            background: #111;
-            box-shadow: 0 0 30px rgba(0,0,0,0.9);
+            width: 100vw;
+            height: 100vh;
+            max-width: 900px;
+            max-height: 100vh;
+            background: #000;
+            box-shadow: 0 0 30px rgba(0, 255, 200, 0.2);
+            overflow: hidden;
         }
 
         canvas {
             display: block;
             width: 100%;
             height: 100%;
+            image-rendering: pixelated;
         }
 
         .overlay {
@@ -44,208 +50,131 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 18, 26, 0.95);
+            background: rgba(5, 10, 20, 0.92);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
             text-align: center;
             z-index: 10;
         }
 
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
-        /* --- NUEVO ESTILO DE LA PANTALLA DE INICIO (COVER) --- */
+        /* COVER / PORTADA */
         #cover-screen {
-            background: radial-gradient(circle at 50% 30%, #004d40 0%, #0d2b45 50%, #050b14 100%);
-            overflow: hidden;
-            position: absolute;
+            background: radial-gradient(circle, #003b46 0%, #021c24 70%, #000d1a 100%);
+            border: 4px solid #00ffcc;
         }
 
-        /* Ondas animadas de agua en el fondo del inicio */
-        #cover-screen::before {
-            content: "";
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(78, 217, 156, 0.12) 10%, transparent 60%);
-            animation: pulseBg 6s ease-in-out infinite alternate;
-            pointer-events: none;
-        }
-
-        @keyframes pulseBg {
-            0% { transform: scale(0.9) rotate(0deg); opacity: 0.5; }
-            100% { transform: scale(1.2) rotate(15deg); opacity: 1; }
-        }
-
-        /* Tarjeta de bienvenida tipo Glassmorphism */
         .cover-card {
-            background: rgba(15, 28, 44, 0.65);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 2px solid rgba(78, 217, 156, 0.3);
-            border-radius: 24px;
-            padding: 35px 25px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 230, 180, 0.15);
-            max-width: 480px;
-            width: 90%;
+            background: rgba(0, 20, 30, 0.8);
+            border: 4px solid #33ffaa;
+            padding: 25px 15px;
+            box-shadow: 0 0 20px #00ffaa;
+            max-width: 500px;
+            width: 95%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            z-index: 2;
-            animation: fadeInCard 1s ease-out;
-        }
-
-        @keyframes fadeInCard {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .hero-badge {
-            background: linear-gradient(90deg, #11998e, #38ef7d);
-            color: #051a14;
-            font-size: 0.75rem;
-            font-weight: 800;
-            padding: 6px 16px;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            background: #ff0055;
+            color: #fff;
+            font-size: 0.6rem;
+            padding: 6px 12px;
             margin-bottom: 15px;
-            box-shadow: 0 4px 12px rgba(56, 239, 125, 0.4);
+            border: 2px solid #fff;
         }
 
         h1.title {
-            font-size: 3rem;
-            font-weight: 900;
-            background: linear-gradient(180deg, #ffffff 10%, #64ffda 60%, #00bfa5 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-            filter: drop-shadow(0 0 15px rgba(100, 255, 218, 0.6));
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            line-height: 1.1;
-            animation: floatTitle 3s ease-in-out infinite alternate;
-        }
-
-        @keyframes floatTitle {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-10px); }
+            font-size: 1.4rem;
+            color: #00ffcc;
+            text-shadow: 3px 3px #ff0055;
+            margin-bottom: 12px;
+            line-height: 1.4;
         }
 
         h2.subtitle {
-            font-size: 1.05rem;
-            color: #b2dfdb;
-            margin-bottom: 28px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            font-size: 0.65rem;
+            color: #aaffe6;
+            margin-bottom: 25px;
+            line-height: 1.5;
         }
 
         .btn-group {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
             width: 100%;
-            max-width: 280px;
+            max-width: 300px;
         }
 
         .btn {
-            background: linear-gradient(135deg, #00b09b, #96c93d);
-            color: #042017;
-            border: none;
-            padding: 16px 28px;
-            font-size: 1.2rem;
-            font-weight: 800;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 6px 20px rgba(0, 176, 155, 0.4), inset 0 1px 1px rgba(255,255,255,0.4);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-
-        .btn:hover {
-            transform: translateY(-4px) scale(1.03);
-            box-shadow: 0 12px 28px rgba(0, 230, 180, 0.6);
-            background: linear-gradient(135deg, #00c8b3, #a2db42);
+            background: #00cc66;
             color: #000;
+            border: 3px solid #fff;
+            padding: 14px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px #006633;
+            transition: transform 0.1s;
+            text-transform: uppercase;
         }
 
         .btn:active {
-            transform: translateY(-1px) scale(0.98);
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #006633;
         }
 
         .btn-secondary {
-            background: linear-gradient(135deg, #2b3a4a, #18232d);
-            color: #4ed99c;
-            border: 1px solid rgba(78, 217, 156, 0.4);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            font-size: 1rem;
+            background: #224466;
+            color: #00ffcc;
+            box-shadow: 4px 4px 0px #112233;
         }
 
-        .btn-secondary:hover {
-            background: linear-gradient(135deg, #3a4d61, #212e3b);
-            box-shadow: 0 6px 20px rgba(78, 217, 156, 0.3);
-            color: #ffffff;
-        }
-
-        /* HUB / STORE STYLES */
+        /* HUB / TIENDA RPG */
         .hub-panel {
-            width: 90%;
-            max-width: 650px;
-            max-height: 85%;
-            background: rgba(20, 32, 45, 0.95);
-            border: 2px solid #34495e;
-            border-radius: 15px;
-            padding: 20px;
+            width: 95%;
+            max-width: 700px;
+            max-height: 90vh;
+            background: #0a1420;
+            border: 4px solid #00ffcc;
+            padding: 15px;
             overflow-y: auto;
-            box-shadow: 0 0 25px rgba(0,0,0,0.8);
         }
 
         .hub-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #34495e;
+            border-bottom: 3px solid #00ffcc;
             padding-bottom: 10px;
             margin-bottom: 15px;
+            font-size: 0.75rem;
         }
 
-        .coin-display {
-            font-size: 1.2rem;
-            color: #f1c40f;
-            font-weight: bold;
-        }
+        .coin-display { color: #ffcc00; }
 
         .section-title {
-            font-size: 1.1rem;
-            color: #4ed99c;
+            font-size: 0.7rem;
+            color: #ff0055;
             margin: 15px 0 10px 0;
             text-align: left;
-            text-transform: uppercase;
         }
 
         .upgrade-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
         }
 
         .upgrade-card {
-            background: rgba(255,255,255,0.05);
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.1);
+            background: #102030;
+            padding: 10px;
+            border: 2px solid #225577;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -253,125 +182,140 @@
         }
 
         .upgrade-card h4 {
-            color: #fff;
-            font-size: 0.95rem;
-            margin-bottom: 5px;
+            color: #00ffcc;
+            font-size: 0.65rem;
+            margin-bottom: 6px;
         }
 
         .upgrade-card p {
             color: #aaa;
-            font-size: 0.75rem;
+            font-size: 0.5rem;
+            line-height: 1.3;
             margin-bottom: 10px;
         }
 
         .buy-btn {
-            background: #f39c12;
-            border: none;
-            color: #fff;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-weight: bold;
+            background: #ffcc00;
+            border: 2px solid #fff;
+            color: #000;
+            padding: 8px;
+            font-size: 0.55rem;
             cursor: pointer;
-            font-size: 0.85rem;
-            transition: background 0.2s;
+            box-shadow: 2px 2px 0 #997700;
         }
 
-        .buy-btn:hover {
-            background: #e67e22;
+        .buy-btn:disabled {
+            background: #555;
+            color: #888;
+            box-shadow: none;
+            cursor: not-allowed;
         }
 
         .color-picker-group {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 8px;
+            margin-bottom: 10px;
         }
 
         .color-opt {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
+            width: 30px;
+            height: 30px;
             cursor: pointer;
             border: 2px solid #fff;
-            transition: transform 0.2s;
         }
 
-        .color-opt:hover {
-            transform: scale(1.15);
-        }
-
-        /* HUD STYLES */
+        /* HUD JUEGO */
         #hud {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             display: flex;
             justify-content: space-between;
             pointer-events: none;
             z-index: 5;
+            font-size: 0.55rem;
         }
 
         .hud-box {
-            background: rgba(10, 20, 30, 0.85);
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 6px 10px;
+            border: 2px solid #00ffcc;
         }
 
-        .hud-title {
-            font-size: 0.65rem;
-            color: #88aabb;
-            text-transform: uppercase;
-        }
-
-        .hud-value {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #4ed99c;
-        }
+        .hud-title { color: #88aabb; margin-bottom: 3px; }
+        .hud-value { color: #00ffcc; font-weight: bold; }
 
         .bar-container {
-            width: 90px;
+            width: 80px;
             height: 8px;
             background: #222;
-            border-radius: 4px;
-            overflow: hidden;
+            border: 1px solid #fff;
             margin-top: 3px;
         }
 
         .bar-fill {
             height: 100%;
-            width: 100%;
-            background: #4ed99c;
+            background: #00ffcc;
             transition: width 0.2s;
         }
 
+        /* CONTROLES TÁCTILES MÓVIL */
         #touch-controls {
             position: absolute;
-            bottom: 20px;
+            bottom: 15px;
             left: 0;
             width: 100%;
             display: flex;
             justify-content: space-between;
-            padding: 0 20px;
+            padding: 0 15px;
             z-index: 5;
             pointer-events: none;
         }
 
+        .touch-group {
+            display: flex;
+            gap: 10px;
+            pointer-events: auto;
+        }
+
         .touch-btn {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.4);
+            width: 55px;
+            height: 55px;
+            background: rgba(0, 255, 200, 0.2);
+            border: 2px solid #00ffcc;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 1.3rem;
+            font-size: 1rem;
             color: white;
             pointer-events: auto;
+            border-radius: 8px;
         }
+
+        .touch-btn:active {
+            background: rgba(0, 255, 200, 0.6);
+        }
+
+        /* BOSS HEALTH BAR */
+        #boss-hud {
+            position: absolute;
+            top: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            max-width: 400px;
+            background: rgba(0,0,0,0.85);
+            border: 2px solid #ff0055;
+            padding: 6px;
+            text-align: center;
+            z-index: 5;
+        }
+
+        #boss-name { font-size: 0.55rem; color: #ff0055; margin-bottom: 4px; }
+        .boss-bar-container { width: 100%; height: 10px; background: #330011; border: 1px solid #fff; }
+        .boss-bar-fill { height: 100%; background: #ff0055; width: 100%; transition: width 0.1s; }
     </style>
 </head>
 <body>
@@ -379,33 +323,29 @@
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
 
-        <!-- 1. PORTADA / COVER SCREEN -->
+        <!-- 1. PORTADA -->
         <div id="cover-screen" class="overlay">
             <div class="cover-card">
-                <span class="hero-badge">🌊 Eco-Arcade Game</span>
-                <h1 class="title">River Rescue Hero</h1>
-                <h2 class="subtitle">Clean the Water, Protect the Realm</h2>
+                <span class="hero-badge">🎮 8-BIT RETRO RPG</span>
+                <h1 class="title">RIVER RESCUE<br>HERO</h1>
+                <h2 class="subtitle">¡PURIFICA EL RÍO Y DERROTA A LOS BOSSES DE CONTAMINACIÓN!</h2>
                 <div class="btn-group">
-                    <button id="cover-play-btn" class="btn">
-                        <span>▶</span> PLAY NOW
-                    </button>
-                    <a href="https://morning-sound-34e5.samuelacostasilva2011s.workers.dev/" target="_blank" class="btn btn-secondary">
-                        <span>ℹ</span> INFORMATION
-                    </a>
+                    <button id="cover-play-btn" class="btn">▶ JUGAR AHORA</button>
+                    <a href="https://morning-sound-34e5.samuelacostasilva2011s.workers.dev/" target="_blank" class="btn btn-secondary" style="text-decoration:none;">ℹ INFO</a>
                 </div>
             </div>
         </div>
 
-        <!-- 2. INTERFAZ PRINCIPAL / HUB & SHOP -->
+        <!-- 2. HUB Y TIENDA RPG -->
         <div id="hub-screen" class="overlay hidden">
             <div class="hub-panel">
                 <div class="hub-header">
-                    <h2>BOAT COMMAND CENTER</h2>
+                    <span>CENTRO DE MANDO</span>
                     <div class="coin-display">🪙 <span id="hub-coins">0</span></div>
                 </div>
 
-                <!-- Customization -->
-                <div class="section-title">Boat Color Customization</div>
+                <!-- Personalización -->
+                <div class="section-title">Color del Barco</div>
                 <div class="color-picker-group">
                     <div class="color-opt" style="background: #e67e22;" onclick="setBoatColor('#e67e22')"></div>
                     <div class="color-opt" style="background: #3498db;" onclick="setBoatColor('#3498db')"></div>
@@ -414,48 +354,53 @@
                     <div class="color-opt" style="background: #2ecc71;" onclick="setBoatColor('#2ecc71')"></div>
                 </div>
 
-                <!-- Upgrades -->
-                <div class="section-title">Upgrades & Skills</div>
+                <!-- Tienda RPG Neceseasia -->
+                <div class="section-title">EQUIPAMIENTO DE COMBATE Y LIMPIEZA</div>
                 <div class="upgrade-grid">
                     <div class="upgrade-card">
                         <div>
-                            <h4>Engine Speed (Lvl <span id="lvl-speed">1</span>)</h4>
-                            <p>Increase boat maneuverability and acceleration.</p>
+                            <h4>Red Recolectora (Nvl <span id="lvl-cargo">1</span>)</h4>
+                            <p>Aumenta capacidad del tanque de residuos antes de purificar.</p>
                         </div>
-                        <button class="buy-btn" onclick="buyUpgrade('speed')">Upgrade (🪙 <span id="cost-speed">50</span>)</button>
+                        <button class="buy-btn" id="btn-cargo" onclick="buyUpgrade('cargo')">Mejorar (🪙 <span id="cost-cargo">50</span>)</button>
                     </div>
+
                     <div class="upgrade-card">
                         <div>
-                            <h4>Trash Cargo (Lvl <span id="lvl-cargo">1</span>)</h4>
-                            <p>Expand waste storage capacity before dumping.</p>
+                            <h4>Motor Turbo (Nvl <span id="lvl-speed">1</span>)</h4>
+                            <p>Mayor velocidad para esquivar ataques de Bosses.</p>
                         </div>
-                        <button class="buy-btn" onclick="buyUpgrade('cargo')">Upgrade (🪙 <span id="cost-cargo">75</span>)</button>
+                        <button class="buy-btn" id="btn-speed" onclick="buyUpgrade('speed')">Mejorar (🪙 <span id="cost-speed">50</span>)</button>
                     </div>
+
                     <div class="upgrade-card">
                         <div>
-                            <h4>Coins Multiplier (Lvl <span id="lvl-mult">1</span>)</h4>
-                            <p>Earn more Eco-Coins for every trash item collected.</p>
+                            <h4>Cañón Limpiador (Nvl <span id="lvl-cannon">0</span>)</h4>
+                            <p>¡DISPARA BARRIDO DE AGUA! Vital para destruir Bosses.</p>
                         </div>
-                        <button class="buy-btn" onclick="buyUpgrade('mult')">Upgrade (🪙 <span id="cost-mult">100</span>)</button>
+                        <button class="buy-btn" id="btn-cannon" onclick="buyUpgrade('cannon')">Comprar (🪙 <span id="cost-cannon">100</span>)</button>
+                    </div>
+
+                    <div class="upgrade-card">
+                        <div>
+                            <h4>Escudo Ecológico (Nvl <span id="lvl-shield">0</span>)</h4>
+                            <p>Absorbe disparos de los Bosses y choques con rocas.</p>
+                        </div>
+                        <button class="buy-btn" id="btn-shield" onclick="buyUpgrade('shield')">Comprar (🪙 <span id="cost-shield">150</span>)</button>
+                    </div>
+
+                    <div class="upgrade-card">
+                        <div>
+                            <h4>Multiplicador Eco (Nvl <span id="lvl-mult">1</span>)</h4>
+                            <p>Gana más monedas por cada basura reciclada.</p>
+                        </div>
+                        <button class="buy-btn" id="btn-mult" onclick="buyUpgrade('mult')">Mejorar (🪙 <span id="cost-mult">75</span>)</button>
                     </div>
                 </div>
 
-                <!-- Settings & Audio -->
-                <div class="section-title">Settings</div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <label>Master Volume:</label>
-                    <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5" style="width: 50%;">
-                </div>
-
-                <!-- Top 10 Leaderboard -->
-                <div class="section-title">Top 10 High Scores</div>
-                <ol id="leaderboard-list" style="text-align: left; padding-left: 20px; color: #ccc; font-size: 0.85rem; margin-bottom: 20px;">
-                    <!-- JS populate -->
-                </ol>
-
-                <div style="display: flex; gap: 10px; justify-content: center;">
-                    <button id="start-mission-btn" class="btn" style="width: 100%;">LAUNCH MISSION</button>
-                    <button id="back-cover-btn" class="btn btn-secondary" style="width: 40%;">BACK</button>
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                    <button id="start-mission-btn" class="btn" style="width: 100%;">INICIAR NIVEL</button>
+                    <button id="back-cover-btn" class="btn btn-secondary" style="width: 40%;">VOLVER</button>
                 </div>
             </div>
         </div>
@@ -463,84 +408,97 @@
         <!-- 3. HUD DE JUEGO -->
         <div id="hud" class="hidden">
             <div class="hud-box">
-                <div class="hud-title">Water Purity</div>
+                <div class="hud-title">Pureza Río</div>
                 <div class="bar-container">
-                    <div id="purity-bar" class="bar-fill" style="width: 30%;"></div>
+                    <div id="purity-bar" class="bar-fill"></div>
                 </div>
             </div>
-            <div class="hud-box" style="text-align: center;">
-                <div class="hud-title">Cargo Tank</div>
-                <div id="hud-cargo" class="hud-value">0 / 10</div>
+            <div class="hud-box">
+                <div class="hud-title">Nivel</div>
+                <div id="hud-level" class="hud-value">1</div>
             </div>
-            <div class="hud-box" style="text-align: right;">
-                <div class="hud-title">Eco-Coins</div>
-                <div id="hud-coins" class="hud-value" style="color: #f1c40f;">0</div>
+            <div class="hud-box">
+                <div class="hud-title">Carga Basura</div>
+                <div id="hud-cargo" class="hud-value">0/10</div>
+            </div>
+            <div class="hud-box">
+                <div class="hud-title">Monedas</div>
+                <div id="hud-coins" class="hud-value" style="color:#ffcc00;">0</div>
+            </div>
+        </div>
+
+        <!-- BOSS HUD -->
+        <div id="boss-hud" class="hidden">
+            <div id="boss-name">JEFE: MONSTRUO DE PLÁSTICO</div>
+            <div class="boss-bar-container">
+                <div id="boss-bar" class="boss-bar-fill"></div>
             </div>
         </div>
 
         <!-- 4. GAME OVER SCREEN -->
         <div id="game-over-screen" class="overlay hidden">
-            <h1 class="title" id="over-title">MISSION OVER</h1>
-            <p id="over-stats" style="margin-bottom: 25px; color: #ccc; line-height: 1.6;"></p>
+            <h1 class="title" id="over-title">MISIÓN FALLIDA</h1>
+            <p id="over-stats" style="margin-bottom: 25px; color: #ccc; font-size: 0.6rem; line-height: 1.8;"></p>
             <div class="btn-group">
-                <button id="restart-btn" class="btn">RETURN TO HUB</button>
+                <button id="restart-btn" class="btn">VOLVER AL HUB</button>
             </div>
         </div>
 
         <!-- Touch Controls -->
         <div id="touch-controls" class="hidden">
-            <div class="touch-btn" id="t-left">◀</div>
-            <div class="touch-btn" id="t-right">▶</div>
+            <div class="touch-group">
+                <div class="touch-btn" id="t-left">◀</div>
+                <div class="touch-btn" id="t-right">▶</div>
+            </div>
+            <div class="touch-group">
+                <div class="touch-btn" id="t-shoot" style="background: rgba(255,0,85,0.3); border-color:#ff0055;">🔫</div>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- GAME STATE & SAVED DATA ---
+        // --- ESTADO DEL JUEGO RPG ---
         let gameData = {
             coins: 0,
             boatColor: '#e67e22',
-            volume: 0.5,
-            upgrades: { speed: 1, cargo: 1, mult: 1 },
-            highScores: [1200, 950, 800, 650, 500]
+            upgrades: { speed: 1, cargo: 1, mult: 1, cannon: 0, shield: 0 }
         };
 
         function loadData() {
-            const saved = localStorage.getItem('river_hero_data');
+            const saved = localStorage.getItem('river_hero_rpg_data');
             if (saved) gameData = JSON.parse(saved);
             updateHubUI();
         }
 
         function saveData() {
-            localStorage.setItem('river_hero_data', JSON.stringify(gameData));
+            localStorage.setItem('river_hero_rpg_data', JSON.stringify(gameData));
         }
 
-        // --- AUDIO SYNTH ---
+        // --- EFECTOS DE SONIDO RETRO SYNTH ---
         class SoundFX {
             constructor() { this.ctx = null; }
             init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
-
             playTone(freq, type, duration) {
-                if (!this.ctx || gameData.volume <= 0) return;
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                gain.gain.setValueAtTime(gameData.volume * 0.3, this.ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + duration);
-                osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + duration);
+                if (!this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + duration);
+                    osc.connect(gain); gain.connect(this.ctx.destination);
+                    osc.start(); osc.stop(this.ctx.currentTime + duration);
+                } catch(e) {}
             }
         }
         const sfx = new SoundFX();
 
-        // --- SETUP CANVAS & GAME ENGINE ---
+        // --- CANVAS Y CONFIGURACIÓN RESPONSIVA ---
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         let width = 0, height = 0;
-        const bankWidth = 60;
-        let gameActive = false, inCover = true;
-        let purity = 30, cargo = 0, sessionCoins = 0, score = 0;
-        let animId = null;
+        let bankWidth = 50;
 
         function resize() {
             const container = document.getElementById('game-container');
@@ -548,49 +506,70 @@
             height = container.clientHeight;
             canvas.width = width;
             canvas.height = height;
+            bankWidth = Math.max(30, width * 0.12);
         }
         window.addEventListener('resize', resize);
         resize();
 
-        // Player Boat Object
+        // Variables de Juego
+        let gameActive = false;
+        let purity = 100, cargo = 0, sessionCoins = 0, score = 0, currentLevel = 1;
+        let activeBoss = null;
+        let animId = null;
+
         const boat = {
-            x: 0, y: 0, vx: 0,
-            width: 36, height: 65,
-            speed: 0.5, friction: 0.90
+            x: 0, y: 0, vx: 0, width: 32, height: 50,
+            speed: 0.5, friction: 0.88, shieldActive: false
         };
 
         let obstacles = [];
+        let bullets = [];
+        let bossBullets = [];
         let particles = [];
-        let riverOffset = 0;
 
-        // --- CONTROLS ---
-        const keys = { left: false, right: false };
+        // NIVELES Y BOSSES
+        const BOSS_DEFINITIONS = {
+            1: { name: "MONSTRUO DE PLÁSTICO", hp: 30, color: "#2ecc71", shootRate: 0.02 },
+            2: { name: "KRAKEN DE PETRÓLEO", hp: 60, color: "#9b59b6", shootRate: 0.04 },
+            3: { name: "DRAGÓN MUTANTE TÓXICO", hp: 100, color: "#e74c3c", shootRate: 0.06 }
+        };
+
+        // --- CONTROLES ---
+        const keys = { left: false, right: false, shoot: false };
         window.addEventListener('keydown', e => {
             if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
             if (e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
+            if (e.key === ' ' || e.key === 'k') shootBullet();
         });
         window.addEventListener('keyup', e => {
             if (e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
             if (e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
         });
 
+        // Controles táctiles
         document.getElementById('t-left').addEventListener('touchstart', (e)=>{ e.preventDefault(); keys.left = true; });
         document.getElementById('t-left').addEventListener('touchend', (e)=>{ e.preventDefault(); keys.left = false; });
         document.getElementById('t-right').addEventListener('touchstart', (e)=>{ e.preventDefault(); keys.right = true; });
         document.getElementById('t-right').addEventListener('touchend', (e)=>{ e.preventDefault(); keys.right = false; });
+        document.getElementById('t-shoot').addEventListener('touchstart', (e)=>{ e.preventDefault(); shootBullet(); });
 
-        // --- HUB & STORE LOGIC ---
+        // --- LÓGICA DE TIENDA Y HUB ---
         function updateHubUI() {
             document.getElementById('hub-coins').innerText = gameData.coins;
+            document.getElementById('lvl-cargo').innerText = gameData.upgrades.cargo;
+            document.getElementById('cost-cargo').innerText = gameData.upgrades.cargo * 50;
+            
             document.getElementById('lvl-speed').innerText = gameData.upgrades.speed;
             document.getElementById('cost-speed').innerText = gameData.upgrades.speed * 50;
-            document.getElementById('lvl-cargo').innerText = gameData.upgrades.cargo;
-            document.getElementById('cost-cargo').innerText = gameData.upgrades.cargo * 75;
-            document.getElementById('lvl-mult').innerText = gameData.upgrades.mult;
-            document.getElementById('cost-mult').innerText = gameData.upgrades.mult * 100;
 
-            const lb = document.getElementById('leaderboard-list');
-            lb.innerHTML = gameData.highScores.map((sc, i) => `<li>Score: <strong>${sc} pts</strong></li>`).join('');
+            document.getElementById('lvl-cannon').innerText = gameData.upgrades.cannon;
+            document.getElementById('cost-cannon').innerText = gameData.upgrades.cannon === 0 ? 100 : (gameData.upgrades.cannon * 100);
+
+            document.getElementById('lvl-shield').innerText = gameData.upgrades.shield;
+            document.getElementById('cost-shield').innerText = gameData.upgrades.shield === 0 ? 150 : (gameData.upgrades.shield * 150);
+
+            document.getElementById('lvl-mult').innerText = gameData.upgrades.mult;
+            document.getElementById('cost-mult').innerText = gameData.upgrades.mult * 75;
         }
 
         function setBoatColor(color) {
@@ -599,32 +578,32 @@
         }
 
         function buyUpgrade(type) {
-            const costs = { speed: gameData.upgrades.speed * 50, cargo: gameData.upgrades.cargo * 75, mult: gameData.upgrades.mult * 100 };
+            const costs = {
+                cargo: gameData.upgrades.cargo * 50,
+                speed: gameData.upgrades.speed * 50,
+                cannon: gameData.upgrades.cannon === 0 ? 100 : gameData.upgrades.cannon * 100,
+                shield: gameData.upgrades.shield === 0 ? 150 : gameData.upgrades.shield * 150,
+                mult: gameData.upgrades.mult * 75
+            };
+
             if (gameData.coins >= costs[type]) {
                 gameData.coins -= costs[type];
                 gameData.upgrades[type]++;
                 saveData();
                 updateHubUI();
-                sfx.playTone(600, 'sine', 0.15);
+                sfx.playTone(600, 'square', 0.15);
             }
         }
 
-        document.getElementById('volume-slider').addEventListener('input', (e) => {
-            gameData.volume = parseFloat(e.target.value);
-            saveData();
-        });
-
-        // --- SCREEN NAVIGATION ---
+        // --- PANTALLAS ---
         document.getElementById('cover-play-btn').addEventListener('click', () => {
             sfx.init();
-            inCover = false;
             document.getElementById('cover-screen').classList.add('hidden');
             document.getElementById('hub-screen').classList.remove('hidden');
             updateHubUI();
         });
 
         document.getElementById('back-cover-btn').addEventListener('click', () => {
-            inCover = true;
             document.getElementById('hub-screen').classList.add('hidden');
             document.getElementById('cover-screen').classList.remove('hidden');
         });
@@ -636,145 +615,81 @@
             updateHubUI();
         });
 
-        // --- GAME LOOP & GRAPHICS ---
+        // --- DISPARO ---
+        function shootBullet() {
+            if (!gameActive || gameData.upgrades.cannon <= 0) return;
+            bullets.push({
+                x: boat.x,
+                y: height - 120,
+                speed: 7
+            });
+            sfx.playTone(800, 'square', 0.08);
+        }
+
+        // --- BUCLE PRINCIPAL DE JUEGO ---
         function startMission() {
-            purity = 30;
+            purity = 100;
             cargo = 0;
             sessionCoins = 0;
             score = 0;
+            currentLevel = 1;
             obstacles = [];
-            particles = [];
+            bullets = [];
+            bossBullets = [];
+            activeBoss = null;
+
             boat.x = width / 2;
-            boat.speed = 0.4 + (gameData.upgrades.speed * 0.12);
+            boat.speed = 0.5 + (gameData.upgrades.speed * 0.15);
+            boat.shieldActive = gameData.upgrades.shield > 0;
 
             document.getElementById('hub-screen').classList.add('hidden');
             document.getElementById('hud').classList.remove('hidden');
             document.getElementById('touch-controls').classList.remove('hidden');
+            document.getElementById('boss-hud').classList.add('hidden');
 
             gameActive = true;
             gameLoop();
         }
 
         function spawnEntities() {
-            if (Math.random() < 0.04) {
-                const types = ['trash', 'rock', 'pirate', 'coin', 'buoy'];
-                const weights = [0.35, 0.25, 0.15, 0.15, 0.1];
-                let rand = Math.random(), sum = 0, selected = 'trash';
-                for (let i = 0; i < types.length; i++) {
-                    sum += weights[i];
-                    if (rand <= sum) { selected = types[i]; break; }
-                }
+            if (activeBoss) return; // No basura normal durante pelea de Boss
 
+            if (Math.random() < 0.035) {
+                const types = ['trash', 'rock', 'coin', 'buoy'];
+                const selected = types[Math.floor(Math.random() * types.length)];
                 obstacles.push({
-                    x: bankWidth + Math.random() * (width - bankWidth * 2 - 40),
-                    y: -80,
-                    width: selected === 'pirate' ? 42 : 32,
-                    height: selected === 'pirate' ? 70 : 32,
+                    x: bankWidth + Math.random() * (width - bankWidth * 2 - 30),
+                    y: -40,
+                    width: 30, height: 30,
                     type: selected
                 });
             }
-        }
 
-        // --- ADVANCED RENDERING (DETAILED SPRITES) ---
-        function drawPlayerBoat(x, y) {
-            ctx.save();
-            ctx.translate(x, y);
-
-            // Water wake behind engine
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-            ctx.beginPath();
-            ctx.moveTo(-10, 30); ctx.lineTo(10, 30); ctx.lineTo(15, 45); ctx.lineTo(-15, 45);
-            ctx.fill();
-
-            // Main Hull
-            ctx.fillStyle = gameData.boatColor;
-            ctx.beginPath();
-            ctx.moveTo(0, -32);
-            ctx.quadraticCurveTo(18, -10, 16, 28);
-            ctx.lineTo(-16, 28);
-            ctx.quadraticCurveTo(-18, -10, 0, -32);
-            ctx.fill();
-            ctx.strokeStyle = '#111';
-            ctx.lineWidth = 2;
-            ctx.stroke();
-
-            // Deck & Cabin
-            ctx.fillStyle = '#d5dbdb';
-            ctx.fillRect(-10, -10, 20, 25);
-            ctx.fillStyle = '#2980b9'; // Windshield
-            ctx.fillRect(-8, -8, 16, 8);
-
-            // Lifebuoy on stern
-            ctx.strokeStyle = '#e74c3c';
-            ctx.lineWidth = 3;
-            ctx.beginPath(); ctx.arc(0, 20, 5, 0, Math.PI * 2); ctx.stroke();
-
-            ctx.restore();
-        }
-
-        function drawPirateShip(x, y) {
-            ctx.save();
-            ctx.translate(x, y);
-
-            // Dark Wood Hull
-            ctx.fillStyle = '#2c3e50';
-            ctx.beginPath();
-            ctx.moveTo(0, 35);
-            ctx.lineTo(20, -10);
-            ctx.lineTo(18, -30);
-            ctx.lineTo(-18, -30);
-            ctx.lineTo(-20, -10);
-            ctx.closePath();
-            ctx.fill();
-
-            // Red Stripes
-            ctx.fillStyle = '#c0392b';
-            ctx.fillRect(-15, -15, 30, 6);
-
-            // Pirate Flag / Deck
-            ctx.fillStyle = '#111';
-            ctx.fillRect(-6, -5, 12, 18);
-            // Skull Mark (Cross)
-            ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
-            ctx.beginPath(); ctx.moveTo(-3, 2); ctx.lineTo(3, 8); ctx.moveTo(3, 2); ctx.lineTo(-3, 8); ctx.stroke();
-
-            ctx.restore();
-        }
-
-        function drawEntity(obs) {
-            ctx.save();
-            ctx.translate(obs.x + obs.width/2, obs.y + obs.height/2);
-
-            if (obs.type === 'trash') {
-                ctx.fillStyle = '#7f8c8d';
-                ctx.fillRect(-10, -10, 20, 20);
-                ctx.fillStyle = '#e67e22'; // Toxic barrel mark
-                ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI * 2); ctx.fill();
-            } else if (obs.type === 'rock') {
-                ctx.fillStyle = '#5d6d7e';
-                ctx.beginPath();
-                ctx.moveTo(-14, -8); ctx.lineTo(4, -14); ctx.lineTo(15, -2); ctx.lineTo(10, 14); ctx.lineTo(-12, 12);
-                ctx.closePath(); ctx.fill();
-            } else if (obs.type === 'coin') {
-                ctx.fillStyle = '#f1c40f';
-                ctx.beginPath(); ctx.arc(0, 0, 11, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#f39c12';
-                ctx.beginPath(); ctx.arc(0, 0, 7, 0, Math.PI * 2); ctx.fill();
-            } else if (obs.type === 'buoy') {
-                ctx.fillStyle = '#2ecc71';
-                ctx.beginPath(); ctx.arc(0, 0, 14, 0, Math.PI * 2); ctx.fill();
-                ctx.fillStyle = '#fff'; ctx.fillRect(-3, -8, 6, 16);
-            } else if (obs.type === 'pirate') {
-                drawPirateShip(0, 0);
+            // Aclaración: Generar Boss al conseguir cierta puntuación
+            if (score > currentLevel * 400 && !activeBoss && currentLevel <= 3) {
+                const bInfo = BOSS_DEFINITIONS[currentLevel];
+                activeBoss = {
+                    x: width / 2 - 40,
+                    y: -100,
+                    targetY: 60,
+                    width: 80,
+                    height: 80,
+                    hp: bInfo.hp,
+                    maxHp: bInfo.hp,
+                    color: bInfo.color,
+                    name: bInfo.name,
+                    shootRate: bInfo.shootRate,
+                    dir: 1
+                };
+                document.getElementById('boss-hud').classList.remove('hidden');
+                document.getElementById('boss-name').innerText = `JEFE: ${activeBoss.name}`;
             }
-
-            ctx.restore();
         }
 
-        // --- UPDATE & MAIN GAME LOOP ---
         function update() {
             if (!gameActive) return;
 
+            // Movimiento jugador
             if (keys.left) boat.vx -= boat.speed;
             if (keys.right) boat.vx += boat.speed;
             boat.vx *= boat.friction;
@@ -785,66 +700,196 @@
 
             spawnEntities();
 
-            const maxCap = 8 + (gameData.upgrades.cargo * 2);
+            const maxCap = 6 + (gameData.upgrades.cargo * 3);
             const coinMult = gameData.upgrades.mult;
 
+            // Mover Disparos Jugador
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                bullets[i].y -= bullets[i].speed;
+                if (bullets[i].y < -10) bullets.splice(i, 1);
+            }
+
+            // Mover y procesar Boss
+            if (activeBoss) {
+                if (activeBoss.y < activeBoss.targetY) activeBoss.y += 2;
+                activeBoss.x += 2 * activeBoss.dir;
+                if (activeBoss.x < bankWidth || activeBoss.x + activeBoss.width > width - bankWidth) {
+                    activeBoss.dir *= -1;
+                }
+
+                // Disparos del Boss
+                if (Math.random() < activeBoss.shootRate) {
+                    bossBullets.push({
+                        x: activeBoss.x + activeBoss.width / 2,
+                        y: activeBoss.y + activeBoss.height,
+                        vx: (Math.random() - 0.5) * 3,
+                        vy: 4
+                    });
+                }
+
+                // Impacto bala del jugador en Boss
+                for (let i = bullets.length - 1; i >= 0; i--) {
+                    let b = bullets[i];
+                    if (b.x > activeBoss.x && b.x < activeBoss.x + activeBoss.width &&
+                        b.y > activeBoss.y && b.y < activeBoss.y + activeBoss.height) {
+                        activeBoss.hp -= (1 + gameData.upgrades.cannon * 0.5);
+                        bullets.splice(i, 1);
+                        sfx.playTone(300, 'sawtooth', 0.05);
+
+                        if (activeBoss.hp <= 0) {
+                            // Boss Derrotado!
+                            score += 500;
+                            sessionCoins += 50 * coinMult;
+                            activeBoss = null;
+                            currentLevel++;
+                            document.getElementById('boss-hud').classList.add('hidden');
+                            sfx.playTone(900, 'sine', 0.4);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Disparos Boss colisión con Jugador
+            for (let i = bossBullets.length - 1; i >= 0; i--) {
+                let bb = bossBullets[i];
+                bb.x += bb.vx;
+                bb.y += bb.vy;
+
+                if (Math.abs(boat.x - bb.x) < 25 && Math.abs((height - 100) - bb.y) < 25) {
+                    if (boat.shieldActive) {
+                        boat.shieldActive = false; // El escudo absorbe un golpe
+                        sfx.playTone(400, 'sine', 0.2);
+                    } else {
+                        purity -= 15;
+                        sfx.playTone(150, 'sawtooth', 0.2);
+                    }
+                    bossBullets.splice(i, 1);
+                } else if (bb.y > height) {
+                    bossBullets.splice(i, 1);
+                }
+            }
+
+            // Mover Obstáculos Basura
             for (let i = obstacles.length - 1; i >= 0; i--) {
                 let obs = obstacles[i];
-                obs.y += 2.5;
+                obs.y += 2.5 + (currentLevel * 0.3);
 
-                // Collision
-                if (Math.abs(boat.x - (obs.x + obs.width/2)) < 28 && Math.abs((height - 120) - (obs.y + obs.height/2)) < 35) {
+                if (Math.abs(boat.x - (obs.x + obs.width/2)) < 25 && Math.abs((height - 100) - (obs.y + obs.height/2)) < 25) {
                     if (obs.type === 'trash') {
                         if (cargo < maxCap) {
                             cargo++;
-                            score += 50;
-                            sfx.playTone(520, 'sine', 0.1);
+                            score += 30;
+                            sfx.playTone(520, 'square', 0.08);
                             obstacles.splice(i, 1);
                         }
                     } else if (obs.type === 'coin') {
                         sessionCoins += (1 * coinMult);
-                        sfx.playTone(880, 'sine', 0.12);
+                        sfx.playTone(880, 'sine', 0.1);
                         obstacles.splice(i, 1);
                     } else if (obs.type === 'buoy') {
                         if (cargo > 0) {
-                            purity = Math.min(100, purity + cargo * 5);
-                            sessionCoins += cargo * 2 * coinMult;
+                            purity = Math.min(100, purity + cargo * 6);
+                            sessionCoins += cargo * 3 * coinMult;
                             cargo = 0;
-                            sfx.playTone(750, 'triangle', 0.25);
+                            sfx.playTone(700, 'triangle', 0.2);
                         }
-                    } else if (obs.type === 'rock' || obs.type === 'pirate') {
-                        purity -= 15;
+                    } else if (obs.type === 'rock') {
+                        if (boat.shieldActive) {
+                            boat.shieldActive = false;
+                        } else {
+                            purity -= 12;
+                        }
                         sfx.playTone(120, 'sawtooth', 0.2);
                         obstacles.splice(i, 1);
                     }
-                } else if (obs.y > height + 50) {
+                } else if (obs.y > height + 40) {
+                    if (obs.type === 'trash') purity -= 3; // Basura no recogida contamina
                     obstacles.splice(i, 1);
                 }
             }
 
-            purity -= 0.025; // Passive river degradation
+            purity -= 0.015 * currentLevel; // Degradación pasiva
             score += 1;
 
-            // HUD Sync
-            document.getElementById('hud-cargo').innerText = `${cargo} / ${maxCap}`;
+            // Actualizar HUD
+            document.getElementById('hud-cargo').innerText = `${cargo}/${maxCap}`;
             document.getElementById('hud-coins').innerText = sessionCoins;
+            document.getElementById('hud-level').innerText = currentLevel;
             document.getElementById('purity-bar').style.width = `${Math.max(0, purity)}%`;
+
+            if (activeBoss) {
+                const pct = Math.max(0, (activeBoss.hp / activeBoss.maxHp) * 100);
+                document.getElementById('boss-bar').style.width = `${pct}%`;
+            }
 
             if (purity <= 0) endGame();
         }
 
+        // --- RENDERIZADO RETRO / PIXEL ART ---
         function render() {
-            // River Background & Shorelines
-            ctx.fillStyle = `rgb(${Math.round(80 * (1 - purity/100))}, ${Math.round(100 * (purity/100) + 40)}, 160)`;
+            // Fondo Agua según nivel y pureza
+            ctx.fillStyle = `rgb(${Math.round(100 * (1 - purity/100))}, ${Math.round(80 * (purity/100))}, 120)`;
             ctx.fillRect(0, 0, width, height);
 
-            // Riverbanks
-            ctx.fillStyle = '#1e2d1a';
+            // Orillas
+            ctx.fillStyle = '#112211';
             ctx.fillRect(0, 0, bankWidth, height);
             ctx.fillRect(width - bankWidth, 0, bankWidth, height);
 
-            obstacles.forEach(drawEntity);
-            drawPlayerBoat(boat.x, height - 120);
+            // Disparos Jugador
+            ctx.fillStyle = '#00ffcc';
+            bullets.forEach(b => ctx.fillRect(b.x - 3, b.y, 6, 12));
+
+            // Disparos Boss
+            ctx.fillStyle = '#ff0055';
+            bossBullets.forEach(bb => ctx.fillRect(bb.x - 4, bb.y, 8, 8));
+
+            // Basuras y Objetos
+            obstacles.forEach(obs => {
+                if (obs.type === 'trash') {
+                    ctx.fillStyle = '#888';
+                    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                    ctx.fillStyle = '#ff9900'; ctx.fillRect(obs.x + 6, obs.y + 6, 18, 18);
+                } else if (obs.type === 'coin') {
+                    ctx.fillStyle = '#ffcc00';
+                    ctx.fillRect(obs.x + 4, obs.y + 4, 22, 22);
+                } else if (obs.type === 'buoy') {
+                    ctx.fillStyle = '#00ff66';
+                    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                } else if (obs.type === 'rock') {
+                    ctx.fillStyle = '#555';
+                    ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+                }
+            });
+
+            // Dibujar Boss
+            if (activeBoss) {
+                ctx.fillStyle = activeBoss.color;
+                ctx.fillRect(activeBoss.x, activeBoss.y, activeBoss.width, activeBoss.height);
+                ctx.fillStyle = '#000';
+                ctx.fillRect(activeBoss.x + 15, activeBoss.y + 20, 15, 15);
+                ctx.fillRect(activeBoss.x + 50, activeBoss.y + 20, 15, 15);
+            }
+
+            // Dibujar Barco del Jugador
+            ctx.save();
+            ctx.translate(boat.x, height - 100);
+
+            // Escudo
+            if (boat.shieldActive) {
+                ctx.strokeStyle = '#00ffcc';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(-20, -30, 40, 60);
+            }
+
+            // Barco
+            ctx.fillStyle = gameData.boatColor;
+            ctx.fillRect(-15, -25, 30, 50);
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(-8, -10, 16, 15);
+
+            ctx.restore();
         }
 
         function gameLoop() {
@@ -858,22 +903,20 @@
             cancelAnimationFrame(animId);
 
             gameData.coins += sessionCoins;
-            gameData.highScores.push(score);
-            gameData.highScores.sort((a, b) => b - a);
-            gameData.highScores = gameData.highScores.slice(0, 10);
             saveData();
 
             document.getElementById('hud').classList.add('hidden');
+            document.getElementById('boss-hud').classList.add('hidden');
             document.getElementById('touch-controls').classList.add('hidden');
             document.getElementById('game-over-screen').classList.remove('hidden');
 
             document.getElementById('over-stats').innerHTML = `
-                Final Score: <strong>${score} pts</strong><br>
-                Eco-Coins Earned: 🪙 <strong>${sessionCoins}</strong>
+                NIVEL ALCANZADO: <strong>${currentLevel}</strong><br>
+                PUNTOS: <strong>${score}</strong><br>
+                MONEDAS OBTENIDAS: 🪙 <strong>${sessionCoins}</strong>
             `;
         }
 
-        // Initialize state
         loadData();
     </script>
 </body>
