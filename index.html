@@ -62,14 +62,14 @@
 
         .hidden { display: none !important; }
 
-        /* COVER / PORTADA */
+        /* COVER / PORTADA CON ANIMACIÓN */
         #cover-screen {
             background: radial-gradient(circle, #003b46 0%, #021c24 70%, #000d1a 100%);
             border: 4px solid #00ffcc;
         }
 
         .cover-card {
-            background: rgba(0, 20, 30, 0.8);
+            background: rgba(0, 20, 30, 0.85);
             border: 4px solid #33ffaa;
             padding: 25px 15px;
             box-shadow: 0 0 20px #00ffaa;
@@ -78,6 +78,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            animation: pulseGlow 2s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px #00ffaa; }
+            100% { box-shadow: 0 0 25px #00ffcc, 0 0 10px #ff0055; }
         }
 
         .hero-badge {
@@ -120,8 +126,13 @@
             font-size: 0.8rem;
             cursor: pointer;
             box-shadow: 4px 4px 0px #006633;
-            transition: transform 0.1s;
+            transition: all 0.1s ease-in-out;
             text-transform: uppercase;
+        }
+
+        .btn:hover {
+            transform: scale(1.03);
+            filter: brightness(1.1);
         }
 
         .btn:active {
@@ -135,7 +146,7 @@
             box-shadow: 4px 4px 0px #112233;
         }
 
-        /* HUB / TIENDA RPG */
+        /* HUB / TIENDA RPG RESPONSIVA */
         .hub-panel {
             width: 95%;
             max-width: 700px;
@@ -322,7 +333,6 @@
                     <div class="coin-display">🪙 <span id="hub-coins">0</span></div>
                 </div>
 
-                <!-- Tienda RPG -->
                 <div class="section-title">EQUIPAMIENTO DE COMBATE Y LIMPIEZA</div>
                 <div class="upgrade-grid">
                     <div class="upgrade-card">
@@ -412,7 +422,7 @@
             </div>
         </div>
 
-        <!-- Touch Controls -->
+        <!-- CONTROLES TÁCTILES MÓVIL -->
         <div id="touch-controls" class="hidden">
             <div class="touch-group">
                 <div class="touch-btn" id="t-left">◀</div>
@@ -425,9 +435,9 @@
     </div>
 
     <script>
-        // --- Cargar la Sprite Sheet del barco (Base64) ---
+        // --- CARGAR IMAGEN DESDE ARCHIVO SUBIDO EN GITHUB ---
         const boatSprite = new Image();
-        boatSprite.src = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFh8n8QkPCBsXFBomLy80NTU5OTY3Nzc0NTU0Nzc5NTU0NTU0Nzc0NTU0Nzc5NTU0Nzc0NTU0Nzc0NTU0Nzc0NTU0Nzc0NTU0Nzc0Nzc5NTU0Nzc0Nzc5NTX/2wBDABsHBwkNCg0QCg0NDgwODR4RDgwNDh4XHBMVGR4YEx4XHBMVGR4YEx4XHBMVGR4YEx4XHBMVGR4YEx4XHBMVGR7/wAAKEAHQA9AQERAP/AABoAAQADAQEBAAAAAAAAAAAAAAABAgMEBQb/xAAnEAADAAICAQQDAAMBAQEAAAAAARECEiExQQMTFFFhInEEEzKBoRH/2g0A4AAQEAAAAAAAAAAAAAAAAAAAAA/9oAD8AAf/aAAwDAQACE me54oAABq1AABO3sAAAatQAATt7AAA88AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//Z";
+        boatSprite.src = "./Gemini_Generated_Image_10hgwx10hgwx10hg.png";
 
         // --- ESTADO DEL JUEGO RPG ---
         let gameData = {
@@ -487,10 +497,11 @@
         let purity = 100, cargo = 0, sessionCoins = 0, score = 0, currentLevel = 1;
         let activeBoss = null;
         let animId = null;
+        let waveTimer = 0; // Para animación del barco
 
         const boat = {
-            x: 0, y: 0, vx: 0, width: 44, height: 70,
-            speed: 0.5, friction: 0.88, shieldActive: false
+            x: 0, y: 0, vx: 0, width: 48, height: 75,
+            speed: 0.5, friction: 0.88, shieldActive: false, tilt: 0
         };
 
         let obstacles = [];
@@ -586,7 +597,7 @@
             bullets.push({
                 x: boat.x,
                 y: height - 120,
-                speed: 7
+                speed: 8
             });
             sfx.playTone(800, 'square', 0.08);
         }
@@ -653,9 +664,19 @@
         function update() {
             if (!gameActive) return;
 
-            // Movimiento barco
-            if (keys.left) boat.vx -= boat.speed;
-            if (keys.right) boat.vx += boat.speed;
+            waveTimer += 0.05;
+
+            // Movimiento e Inclinación del Barco (Animación Dinámica)
+            if (keys.left) {
+                boat.vx -= boat.speed;
+                boat.tilt = -0.15;
+            } else if (keys.right) {
+                boat.vx += boat.speed;
+                boat.tilt = 0.15;
+            } else {
+                boat.tilt *= 0.8;
+            }
+
             boat.vx *= boat.friction;
             boat.x += boat.vx;
 
@@ -786,9 +807,9 @@
             if (purity <= 0) endGame();
         }
 
-        // --- RENDERIZADO DEL BARCO SPRITE ---
+        // --- RENDERIZADO CON ANIMACIONES Y SPRITE LOCAL ---
         function render() {
-            // Fondo de Agua
+            // Fondo de Agua con gradiente dinámico
             ctx.fillStyle = `rgb(${Math.round(100 * (1 - purity/100))}, ${Math.round(80 * (purity/100))}, 120)`;
             ctx.fillRect(0, 0, width, height);
 
@@ -831,11 +852,13 @@
                 ctx.fillRect(activeBoss.x + 50, activeBoss.y + 20, 15, 15);
             }
 
-            // DIBUJAR BARCO CON LA IMAGEN REAL (TOP-DOWN)
+            // DIBUJAR BARCO CON ANIMACIONES (INCLINACIÓN + BALANCEO DE OLA)
             ctx.save();
-            ctx.translate(boat.x, height - 100);
+            const floatOffsetY = Math.sin(waveTimer) * 3; // Balanceo vertical suave
+            ctx.translate(boat.x, height - 100 + floatOffsetY);
+            ctx.rotate(boat.tilt); // Inclinación al girar
 
-            // Dibujar Escudo
+            // Escudo
             if (boat.shieldActive) {
                 ctx.strokeStyle = '#00ffcc';
                 ctx.lineWidth = 3;
@@ -843,15 +866,14 @@
             }
 
             if (boatSprite.complete && boatSprite.naturalWidth !== 0) {
-                // Se recorta exactamente el barco de la vista desde arriba de la imagen
+                // Recorte del barco Top-Down desde la imagen cargada
                 ctx.drawImage(
                     boatSprite,
-                    12, 10, 240, 480,       // Recorte de origen en la imagen (Barco Top-Down)
-                    -boat.width / 2, -boat.height / 2, // Posición centrada en canvas
-                    boat.width, boat.height            // Tamaño escala en juego
+                    12, 10, 240, 480,
+                    -boat.width / 2, -boat.height / 2,
+                    boat.width, boat.height
                 );
             } else {
-                // Fallback mientras carga
                 ctx.fillStyle = '#e67e22';
                 ctx.fillRect(-boat.width/2, -boat.height/2, boat.width, boat.height);
             }
